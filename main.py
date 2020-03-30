@@ -13,23 +13,35 @@ regression_x = np.linspace(0, 10, 100)
 cursor = Cursor(ax,horizOn=True,vertOn=True,color='green',linewidth=1.0)
 
 class LinearRegression:
+
+    def __init__(self):
+        self.alpha = 0
+        self.beta = 0
+        self.points = []
+
     def compute_alpha_and_beta(self, points):
-        x_values = list(map(lambda point: point[0], points))
-        y_values = list(map(lambda point: point[1], points))
+        self.points = points
+        self.x_values = list(map(lambda point: point[0], points))
+        self.y_values = list(map(lambda point: point[1], points))
 
-        x_mean = np.mean(x_values)
-        y_mean = np.mean(y_values)
+        self.x_mean = np.mean(self.x_values)
+        self.y_mean = np.mean(self.y_values)
         
-        Sxy = np.sum(list(map(lambda point: (point[0] - x_mean) * (point[1] - y_mean), points)))
-        Sxx = np.sum(list(map(lambda point: (point[0] - x_mean) * (point[0] - x_mean), points)))
+        Sxy = np.sum(list(map(lambda point: (point[0] - self.x_mean) * (point[1] - self.y_mean), points)))
+        Sxx = np.sum(list(map(lambda point: (point[0] - self.x_mean) * (point[0] - self.x_mean), points)))
 
-        beta = Sxy / Sxx
-        alpha = y_mean - beta * x_mean
+        self.beta = Sxy / Sxx
+        self.alpha = self.y_mean - self.beta * self.x_mean
 
-        return alpha, beta
+    def linear_regression(self, x):
+        return self.alpha + self.beta * x
 
-    def linear_regression(self, alpha, beta, x):
-        return alpha + beta * x
+    def get_squared_error(self):
+        return np.sum(list(map(lambda point: (point[1] - self.linear_regression(point[0]))**2, self.points))) 
+
+    def get_absolute_error(self):
+        return np.sum(list(map(lambda point: np.abs(point[1] - self.linear_regression(point[0])), self.points))) 
+
 
 class Index:
     def __init__(self):
@@ -46,9 +58,11 @@ class Index:
 
         # regression curve
         if len(self.points) > 1:
-            alpha, beta = self.lin_reg.compute_alpha_and_beta(points=self.points)
+            self.lin_reg.compute_alpha_and_beta(points=self.points)
             self.graph.set_xdata(regression_x)
-            self.graph.set_ydata(list(map(lambda x: self.lin_reg.linear_regression(alpha, beta, x), regression_x)))
+            self.graph.set_ydata(list(map(lambda x: self.lin_reg.linear_regression(x), regression_x)))
+            print("squared error: %s" % self.lin_reg.get_squared_error())
+            print("absolute error: %s" % self.lin_reg.get_absolute_error())
         
     def clear(self, event):
         pass
