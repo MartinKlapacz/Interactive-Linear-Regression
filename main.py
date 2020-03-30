@@ -13,11 +13,7 @@ regression_x = np.linspace(0, 10, 100)
 
 points = []
 
-cursor = Cursor(ax,
-    horizOn=True,
-    vertOn=True,
-    color='green',
-    linewidth=1.0)
+cursor = Cursor(ax,horizOn=True,vertOn=True,color='green',linewidth=1.0)
 
 def compute_alpha_beta(points):
     x_values = list(map(lambda point: point[0], points))
@@ -37,18 +33,23 @@ def compute_alpha_beta(points):
 def linear_regression(alpha, beta, x):
     return alpha + beta * x
 
+graph, = plt.plot([], [])
 
 def onclick(event):
+    # save and draw new point
     circle = plt.Circle((event.xdata, event.ydata), 0.1,  color='b')
     ax.add_artist(circle)
     points.append((event.xdata, event.ydata))
-
-    if len(points) > 1:
-        alpha, beta = compute_alpha_beta(points=points)
-        line = plt.plot(regression_x, list(map(lambda x: linear_regression(alpha, beta, x), regression_x)), linestyle='-')    
     fig.canvas.draw()
 
+    # regression curve
+    if len(points) > 1:
+        alpha, beta = compute_alpha_beta(points=points)
+        graph.set_xdata(regression_x)
+        graph.set_ydata(list(map(lambda x: linear_regression(alpha, beta, x), regression_x)))
 
+
+# add onClick event
 cid = fig.canvas.mpl_connect('button_press_event', onclick)
 
 # both axes equally scaled
