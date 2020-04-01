@@ -1,2 +1,5 @@
 .vscode
 venv
+lib
+bin
+*.cfg
