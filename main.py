@@ -19,6 +19,8 @@ ax2.set_xlim([0, 60])
 ax2.set_ylim([0, 100])
 ax2.set_title("error curve")
 ax2.set_xlabel("number of points")
+ax2.text(2, 95, 'squared',color="red")
+ax2.text(2, 90, 'absolute',color="green")
 plt.gca().set_aspect('equal', adjustable='box')
 
 
@@ -67,7 +69,7 @@ class Index:
         self.squared_error_graph,  = ax2.plot(self.squared_error_y, [0], 'r-')
 
         self.absolute_error_y = [0]
-        self.absolute_error_graph,  = ax2.plot(self.absolute_error_y, [0], 'y-')
+        self.absolute_error_graph,  = ax2.plot(self.absolute_error_y, [0], 'g-')
 
 
     def onclick(self, event):
