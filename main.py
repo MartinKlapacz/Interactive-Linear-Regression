@@ -6,11 +6,25 @@ import numpy as np
 
 
 fig = plt.figure()
-ax = fig.add_subplot(111)
-ax.set_xlim([0, 10])
-ax.set_ylim([0, 10])
+
+ax1 = fig.add_subplot(1, 2, 1)
+ax1.set_xlim([0, 10])
+ax1.set_ylim([0, 10])
+ax1.set_title("regression curve")
+plt.gca().set_aspect('equal', adjustable='box')
+
+
+ax2 = fig.add_subplot(1, 2, 2)
+ax2.set_xlim([0, 60])
+ax2.set_ylim([0, 100])
+ax2.set_title("error curve")
+ax2.set_xlabel("number of points")
+plt.gca().set_aspect('equal', adjustable='box')
+
+
+
 regression_x = np.linspace(0, 10, 100)
-cursor = Cursor(ax,horizOn=True,vertOn=True,color='green',linewidth=1.0)
+cursor = Cursor(ax1,horizOn=True,vertOn=True,color='green',linewidth=1.0)
 
 class LinearRegression:
 
@@ -47,24 +61,33 @@ class Index:
     def __init__(self):
         self.lin_reg = LinearRegression()
         self.points = []
-        self.graph, = plt.plot([], [])
+        self.regression_curve, = ax1.plot([], [], 'b-')
+        self.error_y = [0]
+        self.error_graph,  = ax2.plot(self.error_y, [0], 'r-')
 
     def onclick(self, event):
-        if event.xdata is None or event.ydata is None:
+        if event.xdata is None or event.ydata is None or not ax1 is event.inaxes:
             return 
         # save and draw new point
         circle = plt.Circle((event.xdata, event.ydata), 0.1,  color='b')
-        ax.add_artist(circle)
+        ax1.add_artist(circle)
         self.points.append((event.xdata, event.ydata))
         fig.canvas.draw()
 
         # regression curve
         if len(self.points) > 1:
             self.lin_reg.compute_alpha_and_beta(points=self.points)
-            self.graph.set_xdata(regression_x)
-            self.graph.set_ydata(list(map(lambda x: self.lin_reg.linear_regression(x), regression_x)))
-            print("squared error: %s" % self.lin_reg.get_squared_error())
-            print("absolute error: %s" % self.lin_reg.get_absolute_error())
+
+            self.regression_curve.set_xdata(regression_x)
+            self.regression_curve.set_ydata(list(map(lambda x: self.lin_reg.linear_regression(x), regression_x)))
+
+            # maybe this should be better solved
+            self.error_graph.set_xdata(list(range(len(self.points))))
+            self.error_y.append(self.lin_reg.get_squared_error())
+            self.error_graph.set_ydata(self.error_y)
+            print(event.inaxes)
+            print(ax1)
+            print(event.inaxes is ax1)
         
     def clear(self, event):
         pass
@@ -73,7 +96,5 @@ class Index:
 callback = Index()
 # add onClick event
 cid = fig.canvas.mpl_connect('button_press_event', callback.onclick)
-# both axes equally scaled
-plt.gca().set_aspect('equal', adjustable='box')
 
 plt.show()
