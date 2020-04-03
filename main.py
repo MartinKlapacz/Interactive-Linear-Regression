@@ -62,8 +62,13 @@ class Index:
         self.lin_reg = LinearRegression()
         self.points = []
         self.regression_curve, = ax1.plot([], [], 'b-')
-        self.error_y = [0]
-        self.error_graph,  = ax2.plot(self.error_y, [0], 'r-')
+
+        self.squared_error_y = [0]
+        self.squared_error_graph,  = ax2.plot(self.squared_error_y, [0], 'r-')
+
+        self.absolute_error_y = [0]
+        self.absolute_error_graph,  = ax2.plot(self.absolute_error_y, [0], 'y-')
+
 
     def onclick(self, event):
         if event.xdata is None or event.ydata is None or not ax1 is event.inaxes:
@@ -74,20 +79,23 @@ class Index:
         self.points.append((event.xdata, event.ydata))
         fig.canvas.draw()
 
-        # regression curve
+        # plot graphs
         if len(self.points) > 1:
             self.lin_reg.compute_alpha_and_beta(points=self.points)
 
             self.regression_curve.set_xdata(regression_x)
             self.regression_curve.set_ydata(list(map(lambda x: self.lin_reg.linear_regression(x), regression_x)))
 
-            # maybe this should be better solved
-            self.error_graph.set_xdata(list(range(len(self.points))))
-            self.error_y.append(self.lin_reg.get_squared_error())
-            self.error_graph.set_ydata(self.error_y)
-            print(event.inaxes)
-            print(ax1)
-            print(event.inaxes is ax1)
+            # this may be better solved
+            self.squared_error_graph.set_xdata(list(range(len(self.points))))
+            self.squared_error_y.append(self.lin_reg.get_squared_error())
+            self.squared_error_graph.set_ydata(self.squared_error_y)
+
+            # this may be better solved
+            self.absolute_error_graph.set_xdata(list(range(len(self.points))))
+            self.absolute_error_y.append(self.lin_reg.get_absolute_error())
+            self.absolute_error_graph.set_ydata(self.absolute_error_y)
+
         
     def clear(self, event):
         pass
