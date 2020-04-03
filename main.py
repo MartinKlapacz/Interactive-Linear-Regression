@@ -50,6 +50,8 @@ class Index:
         self.graph, = plt.plot([], [])
 
     def onclick(self, event):
+        if event.xdata is None or event.ydata is None:
+            return 
         # save and draw new point
         circle = plt.Circle((event.xdata, event.ydata), 0.1,  color='b')
         ax.add_artist(circle)
