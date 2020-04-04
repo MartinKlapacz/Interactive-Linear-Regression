@@ -35,21 +35,21 @@ class LinearRegression:
         self.beta = 0
         self.points = []
 
-    def compute_alpha_and_beta(self, points):
-        self.points = points
-        self.x_values = list(map(lambda point: point[0], points))
-        self.y_values = list(map(lambda point: point[1], points))
+    def linear_regression(self, x):
+        # compute alpha and beta
+        self.x_values = list(map(lambda point: point[0], self.points))
+        self.y_values = list(map(lambda point: point[1], self.points))
 
         self.x_mean = np.mean(self.x_values)
         self.y_mean = np.mean(self.y_values)
         
-        Sxy = np.sum(list(map(lambda point: (point[0] - self.x_mean) * (point[1] - self.y_mean), points)))
-        Sxx = np.sum(list(map(lambda point: (point[0] - self.x_mean) * (point[0] - self.x_mean), points)))
+        Sxy = np.sum(list(map(lambda point: (point[0] - self.x_mean) * (point[1] - self.y_mean), self.points)))
+        Sxx = np.sum(list(map(lambda point: (point[0] - self.x_mean) * (point[0] - self.x_mean), self.points)))
 
         self.beta = Sxy / Sxx
         self.alpha = self.y_mean - self.beta * self.x_mean
 
-    def linear_regression(self, x):
+        # apply regression function to x using computed alpha and beta
         return self.alpha + self.beta * x
 
     def get_squared_error(self):
@@ -62,7 +62,6 @@ class LinearRegression:
 class Index:
     def __init__(self):
         self.lin_reg = LinearRegression()
-        self.points = []
         self.regression_curve, = ax1.plot([], [], 'b-')
 
         self.squared_error_y = [0]
@@ -78,33 +77,53 @@ class Index:
         # save and draw new point
         circle = plt.Circle((event.xdata, event.ydata), 0.1,  color='b')
         ax1.add_artist(circle)
-        self.points.append((event.xdata, event.ydata))
+        self.lin_reg.points.append((event.xdata, event.ydata))
         fig.canvas.draw()
 
         # plot graphs
-        if len(self.points) > 1:
-            self.lin_reg.compute_alpha_and_beta(points=self.points)
-
+        if len(self.lin_reg.points) > 1:
             self.regression_curve.set_xdata(regression_x)
             self.regression_curve.set_ydata(list(map(lambda x: self.lin_reg.linear_regression(x), regression_x)))
 
             # this may be better solved
-            self.squared_error_graph.set_xdata(list(range(len(self.points))))
+            self.squared_error_graph.set_xdata(list(range(len(self.lin_reg.points))))
             self.squared_error_y.append(self.lin_reg.get_squared_error())
             self.squared_error_graph.set_ydata(self.squared_error_y)
 
             # this may be better solved
-            self.absolute_error_graph.set_xdata(list(range(len(self.points))))
+            self.absolute_error_graph.set_xdata(list(range(len(self.lin_reg.points))))
             self.absolute_error_y.append(self.lin_reg.get_absolute_error())
             self.absolute_error_graph.set_ydata(self.absolute_error_y)
 
         
     def clear(self, event):
-        pass
+        # remove points
+        self.lin_reg.points.clear()
+
+        # remove artists
+        ax1.artists = []        
+
+        # reset regression curve
+        self.regression_curve.set_xdata([])
+        self.regression_curve.set_ydata([])
+
+        # reset error graphs
+        self.squared_error_y = [0]
+        self.squared_error_graph.set_xdata([0])
+        self.squared_error_graph.set_ydata([0])
+        self.absolute_error_y = [0]
+        self.absolute_error_graph.set_xdata([0])
+        self.absolute_error_graph.set_ydata([0])
+
+        
 
 
 callback = Index()
 # add onClick event
 cid = fig.canvas.mpl_connect('button_press_event', callback.onclick)
+
+clear_button_sizes = plt.axes([0.40, 0.10, 0.1, 0.075])
+clear_button = Button(clear_button_sizes, "clear")
+clear_button.on_clicked(callback.clear)
 
 plt.show()
