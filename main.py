@@ -26,10 +26,8 @@ plt.gca().set_aspect('equal', adjustable='box')
 
 
 regression_x = np.linspace(0, 10, 100)
-cursor = Cursor(ax1,horizOn=True,vertOn=True,color='green',linewidth=1.0)
 
 class LinearRegression:
-
     def __init__(self):
         self.alpha = 0
         self.beta = 0
@@ -82,15 +80,16 @@ class Index:
 
         # plot graphs
         if len(self.lin_reg.points) > 1:
+            # upadte regression curve
             self.regression_curve.set_xdata(regression_x)
             self.regression_curve.set_ydata(list(map(lambda x: self.lin_reg.linear_regression(x), regression_x)))
 
-            # this may be better solved
+            # update squared error graph
             self.squared_error_graph.set_xdata(list(range(len(self.lin_reg.points))))
             self.squared_error_y.append(self.lin_reg.get_squared_error())
             self.squared_error_graph.set_ydata(self.squared_error_y)
 
-            # this may be better solved
+            # update absolute error graph
             self.absolute_error_graph.set_xdata(list(range(len(self.lin_reg.points))))
             self.absolute_error_y.append(self.lin_reg.get_absolute_error())
             self.absolute_error_graph.set_ydata(self.absolute_error_y)
@@ -115,14 +114,15 @@ class Index:
         self.absolute_error_graph.set_xdata([0])
         self.absolute_error_graph.set_ydata([0])
 
-        
 
 
 callback = Index()
+
 # add onClick event
 cid = fig.canvas.mpl_connect('button_press_event', callback.onclick)
 
-clear_button_sizes = plt.axes([0.40, 0.10, 0.1, 0.075])
+# button widget
+clear_button_sizes = plt.axes([0.05, 0.90, 0.1, 0.075])
 clear_button = Button(clear_button_sizes, "clear")
 clear_button.on_clicked(callback.clear)
 

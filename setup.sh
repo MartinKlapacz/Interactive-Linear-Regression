@@ -3,6 +3,3 @@ pip3 install virtualenv
 virtualenv .
 source ./bin/activate
 pip install matplotlib numpy
-
-# run python3 main.py
-python3 main.py
