@@ -1,9 +1,7 @@
-
-
-installation:
+# Installation:
 run ./setup.sh 
 
-It will:
+## It will:
 - make sure the pip is installed
 - install venv
 - create a virtual environment and activate it
@@ -11,12 +9,12 @@ It will:
 - start the program
 
 
-To start the program run:
-source ./bin/activate
-python main.py
+# Start the program:
+- source ./bin/activate
+- python main.py
 
 
-Description: 
+# Description: 
 Each click on the left window will create a new point.
 If there are at least two points, a regression curve will appear and
 will take the existing points into consideration.
