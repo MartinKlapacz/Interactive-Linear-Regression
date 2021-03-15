@@ -1,20 +1,4 @@
-# Installation:
-run ./setup.sh 
-
-## It will:
-- make sure the pip is installed
-- install venv
-- create a virtual environment and activate it
-- install the necessary python packages matplotlib and numpy
-- start the program
-
-
-# Start the program:
-- source ./bin/activate
-- python main.py
-
-
-# Description: 
+# Interactive linear regression: 
 Each click on the left window will create a new point.
 If there are at least two points, a regression curve will appear and
 will take the existing points into consideration.
